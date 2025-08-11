@@ -33,7 +33,6 @@ export const store = mutation({
       imageUrl: identity.pictureUrl,
       plan: "free", // Default plan
       projectsUsed: 0, // Initialize usage counters
-      exportsThisMonth: 0,
       createdAt: Date.now(),
       lastActiveAt: Date.now(),
     });

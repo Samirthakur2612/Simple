@@ -2,13 +2,6 @@ import { NextResponse } from "next/server";
 import ImageKit from "imagekit";
 import { auth } from "@clerk/nextjs/server";
 
-// Initialize ImageKit
-const imagekit = new ImageKit({
-  publicKey: process.env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY,
-  privateKey: process.env.IMAGEKIT_PRIVATE_KEY,
-  urlEndpoint: process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT,
-});
-
 export async function POST(request) {
   try {
     // Verify authentication
@@ -16,6 +9,30 @@ export async function POST(request) {
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+
+    // Check for required environment variables
+    const publicKey = process.env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY;
+    const privateKey = process.env.IMAGEKIT_PRIVATE_KEY;
+    const urlEndpoint = process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT;
+
+    if (!publicKey || !privateKey || !urlEndpoint) {
+      console.error("Missing ImageKit environment variables:", {
+        publicKey: !!publicKey,
+        privateKey: !!privateKey,
+        urlEndpoint: !!urlEndpoint,
+      });
+      return NextResponse.json(
+        { error: "ImageKit configuration is incomplete" },
+        { status: 500 }
+      );
+    }
+
+    // Initialize ImageKit
+    const imagekit = new ImageKit({
+      publicKey,
+      privateKey,
+      urlEndpoint,
+    });
 
     // Get form data
     const formData = await request.formData();

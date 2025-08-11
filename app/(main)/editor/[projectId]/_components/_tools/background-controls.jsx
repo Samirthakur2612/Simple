@@ -12,12 +12,13 @@ import {
   Download,
   Loader2,
   Check,
+  Sparkles,
 } from "lucide-react";
 import { HexColorPicker } from "react-colorful";
 import { useCanvas } from "@/context/context";
 import { FabricImage } from "fabric";
+import { useAuth } from "@clerk/nextjs"; // Remove useUser
 
-// Unsplash API configuration
 const UNSPLASH_ACCESS_KEY = process.env.NEXT_PUBLIC_UNSPLASH_ACCESS_KEY;
 const UNSPLASH_API_URL = "https://api.unsplash.com";
 
@@ -28,15 +29,17 @@ export function BackgroundControls({ project }) {
   const [unsplashImages, setUnsplashImages] = useState(null);
   const [isSearching, setIsSearching] = useState(false);
   const [selectedImageId, setSelectedImageId] = useState(null);
+  const { has } = useAuth(); // Destructure has from useAuth
+  // const { user } = useUser(); // Remove useUser
 
-  // Get the main image object from canvas
+  const isPro = has?.({ plan: "pro" }); // Check for pro plan
+
   const getMainImage = () => {
     if (!canvasEditor) return null;
     const objects = canvasEditor.getObjects();
     return objects.find((obj) => obj.type === "image") || null;
   };
 
-  // Background removal using ImageKit
   const handleBackgroundRemoval = async () => {
     const mainImage = getMainImage();
     if (!mainImage || !project) return;
@@ -44,16 +47,13 @@ export function BackgroundControls({ project }) {
     setProcessingMessage("Removing background with AI...");
 
     try {
-      // Get the current image URL
       const currentImageUrl =
         project.currentImageUrl || project.originalImageUrl;
 
-      // Create ImageKit transformation URL for background removal
       const bgRemovedUrl = currentImageUrl.includes("ik.imagekit.io")
         ? `${currentImageUrl.split("?")[0]}?tr=e-bgremove`
         : currentImageUrl;
 
-      // Create new image with background removed
       const processedImage = await FabricImage.fromURL(bgRemovedUrl, {
         crossOrigin: "anonymous",
       });
@@ -225,7 +225,7 @@ export function BackgroundControls({ project }) {
 
         <Button
           onClick={handleBackgroundRemoval}
-          disabled={processingMessage || !getMainImage()}
+          disabled={processingMessage || !getMainImage() || !isPro}
           className="w-full"
           variant="primary"
         >
@@ -238,6 +238,35 @@ export function BackgroundControls({ project }) {
             Please add an image to the canvas first to remove its background
           </p>
         )}
+
+        {/* Upgrade/Current Plan Message */}
+        <div className="bg-gradient-to-br from-purple-600/20 to-blue-500/20 border border-blue-400/50 rounded-lg p-4 text-center space-y-4">
+          <Sparkles className="h-8 w-8 text-cyan-400 mx-auto" />
+          <h3 className="text-xl font-bold text-white">
+            {isPro ? "You have AI Background Removal" : "Unlock AI Background Removal"}
+          </h3>
+          <p className="text-white/80 text-sm">
+            {isPro
+              ? "You currently have access to this feature with your Pro plan."
+              : `Upgrade to the <span className="text-cyan-400">Pro plan</span> for
+            unlimited access to AI Background Removal and many more powerful AI tools.`}
+          </p>
+          <a
+            href="https://rzp.io/rzp/FVwwVd0s" // Razorpay link
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-block w-full"
+          >
+            <Button
+              variant="primary"
+              size="lg"
+              className="w-full"
+              disabled={isPro} // Disable if already Pro
+            >
+              {isPro ? "Current Plan" : "Upgrade to Pro"}
+            </Button>
+          </a>
+        </div>
       </div>
 
       {/* Shadcn UI Tabs */}

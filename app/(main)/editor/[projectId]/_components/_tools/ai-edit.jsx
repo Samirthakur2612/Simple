@@ -54,7 +54,7 @@ const RETOUCH_PRESETS = [
 
 export function AIEdit({ project }) {
   const { canvasEditor, setProcessingMessage } = useCanvas();
-  const [selectedPreset, setSelectedPreset] = useState("ai_retouch"); // Fixed default
+  const [selectedPreset, setSelectedPreset] = useState("ai_retouch"); 
   const { mutate: updateProject } = useConvexMutation(
     api.projects.updateProject
   );
@@ -73,12 +73,11 @@ export function AIEdit({ project }) {
       const existingTr = params.get("tr");
 
       if (existingTr) {
-        // Append retouch to existing transformations
+        // Merge existing transformations with new ones
         return `${baseUrl}?tr=${existingTr},${preset.transform}`;
       }
     }
 
-    // No existing transformations, create new
     return `${baseUrl}?tr=${preset.transform}`;
   };
 
@@ -96,12 +95,12 @@ export function AIEdit({ project }) {
       const currentImageUrl =
         mainImage.getSrc?.() || mainImage._element?.src || mainImage.src;
       const retouchedUrl = buildRetouchUrl(currentImageUrl, selectedPreset);
+      console.log("Attempting to load image from URL:", retouchedUrl);
 
       const retouchedImage = await FabricImage.fromURL(retouchedUrl, {
         crossOrigin: "anonymous",
       });
 
-      // Preserve current image properties
       const imageProps = {
         left: mainImage.left,
         top: mainImage.top,
@@ -114,7 +113,6 @@ export function AIEdit({ project }) {
         evented: true,
       };
 
-      // Replace image
       canvasEditor.remove(mainImage);
       retouchedImage.set(imageProps);
       canvasEditor.add(retouchedImage);
@@ -122,7 +120,6 @@ export function AIEdit({ project }) {
       canvasEditor.setActiveObject(retouchedImage);
       canvasEditor.requestRenderAll();
 
-      // Update project
       await updateProject({
         projectId: project._id,
         currentImageUrl: retouchedUrl,
@@ -137,7 +134,6 @@ export function AIEdit({ project }) {
     }
   };
 
-  // Early returns
   if (!canvasEditor) {
     return <div className="p-4 text-white/70 text-sm">Canvas not ready</div>;
   }

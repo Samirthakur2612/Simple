@@ -7,7 +7,6 @@ import { RotateCcw } from "lucide-react";
 import { filters } from "fabric";
 import { useCanvas } from "@/context/context";
 
-// Filter configurations
 const FILTER_CONFIGS = [
   {
     key: "brightness",
@@ -78,7 +77,6 @@ const FILTER_CONFIGS = [
   },
 ];
 
-// Default values object
 const DEFAULT_VALUES = FILTER_CONFIGS.reduce((acc, config) => {
   acc[config.key] = config.defaultValue;
   return acc;

@@ -14,7 +14,7 @@ import { AdjustControls } from "./_tools/adjust";
 import { BackgroundControls } from "./_tools/background-controls";
 import { useCanvas } from "@/context/context";
 import { TextControls } from "./_tools/text";
-import { AIExtenderControls } from "./_tools/ai-extend";
+import { BackgroundControls as AIExtenderControls } from "./_tools/ai-extend";
 import { ResizeControls } from "./_tools/resize";
 import { AIEdit } from "./_tools/ai-edit";
 import { CropContent } from "./_tools/crop";

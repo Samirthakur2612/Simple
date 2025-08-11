@@ -7,6 +7,11 @@ export const getUserProjects = query({
   handler: async (ctx) => {
     const user = await ctx.runQuery(internal.users.getCurrentUser);
 
+    // Only return projects for Pro users
+    if (user.plan !== "pro") {
+      return []; // Return empty array for non-pro users, effectively locking projects
+    }
+
     // Get user's projects, ordered by most recently updated
     const projects = await ctx.db
       .query("projects")
@@ -32,18 +37,9 @@ export const create = mutation({
   handler: async (ctx, args) => {
     const user = await ctx.runQuery(internal.users.getCurrentUser);
 
-    // Check plan limits for free users
-    if (user.plan === "free") {
-      const projectCount = await ctx.db
-        .query("projects")
-        .withIndex("by_user", (q) => q.eq("userId", user._id))
-        .collect();
-
-      if (projectCount.length >= 3) {
-        throw new Error(
-          "Free plan limited to 3 projects. Upgrade to Pro for unlimited projects."
-        );
-      }
+    // Prevent non-pro users from creating new projects
+    if (user.plan !== "pro") {
+      throw new Error("Upgrade to Pro to create unlimited projects.");
     }
 
     // Create the project
@@ -60,7 +56,7 @@ export const create = mutation({
       updatedAt: Date.now(),
     });
 
-    // Update user's project count
+    // Update user's project count (only relevant if we re-introduce limits for Pro)
     await ctx.db.patch(user._id, {
       projectsUsed: user.projectsUsed + 1,
       lastActiveAt: Date.now(),
@@ -104,6 +100,11 @@ export const getProject = query({
   handler: async (ctx, args) => {
     const user = await ctx.runQuery(internal.users.getCurrentUser);
 
+    // Throw error if non-pro user tries to access a project
+    if (user.plan !== "pro") {
+      throw new Error("Upgrade to Pro to access projects.");
+    }
+
     const project = await ctx.db.get(args.projectId);
     if (!project) {
       throw new Error("Project not found");
@@ -131,6 +132,11 @@ export const updateProject = mutation({
   },
   handler: async (ctx, args) => {
     const user = await ctx.runQuery(internal.users.getCurrentUser);
+
+    // Throw error if non-pro user tries to update a project (implicitly for AI features)
+    if (user.plan !== "pro") {
+      throw new Error("Upgrade to Pro to use AI features and save changes.");
+    }
 
     const project = await ctx.db.get(args.projectId);
     if (!project) {

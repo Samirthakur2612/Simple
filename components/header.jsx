@@ -50,7 +50,7 @@ export default function Header() {
               Pricing
             </Link>
             <Link
-              href="#contact"
+              href="/contact"
               className="text-white font-medium transition-all duration-300 hover:text-cyan-400 cursor-pointer"
             >
               Contact
@@ -61,7 +61,7 @@ export default function Header() {
         {/* Auth Actions */}
         <div className="flex items-center gap-3 ml-10 md:ml-20">
           <Authenticated>
-            <Link href="/dashboard">
+            <Link href="/dashboard" className="cursor-pointer">
               <Button variant="glass" className="hidden sm:flex">
                 <LayoutDashboard className="h-4 w-4" />
                 <span className="hidden md:flex">Dashboard</span>

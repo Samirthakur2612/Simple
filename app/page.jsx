@@ -42,9 +42,9 @@ const HeroSection = () => {
                 Start Creating
               </Button>
             </Link>
-            <Button variant="glass" size="xl">
+            {/* <Button variant="glass" size="xl">
               Watch Demo
-            </Button>
+            </Button> */}
           </div>
         </div>
 

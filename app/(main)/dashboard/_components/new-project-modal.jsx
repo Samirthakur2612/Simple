@@ -34,18 +34,15 @@ export function NewProjectModal({ isOpen, onClose }) {
   const { canCreateProject, isFree } = usePlanAccess();
   const router = useRouter();
 
-  // Check if user can create new project
   const currentProjectCount = projects?.length || 0;
   const canCreate = canCreateProject(currentProjectCount);
 
-  // Handle file drop
   const onDrop = useCallback((acceptedFiles) => {
     const file = acceptedFiles[0];
     if (file) {
       setSelectedFile(file);
       setPreviewUrl(URL.createObjectURL(file));
 
-      // Auto-generate title from filename
       const nameWithoutExt = file.name.replace(/\.[^/.]+$/, "");
       setProjectTitle(nameWithoutExt || "Untitled Project");
     }
@@ -57,12 +54,11 @@ export function NewProjectModal({ isOpen, onClose }) {
       "image/*": [".png", ".jpg", ".jpeg", ".webp", ".gif"],
     },
     maxFiles: 1,
-    maxSize: 20 * 1024 * 1024, // 20MB limit
+    maxSize: 20 * 1024 * 1024, 
   });
 
-  // Handle create project with plan limit check
   const handleCreateProject = async () => {
-    // Check project limits first
+  
     if (!canCreate) {
       setShowUpgradeModal(true);
       return;
@@ -76,7 +72,7 @@ export function NewProjectModal({ isOpen, onClose }) {
     setIsUploading(true);
 
     try {
-      // Upload to ImageKit via our API route
+  
       const formData = new FormData();
       formData.append("file", selectedFile);
       formData.append("fileName", selectedFile.name);
@@ -92,7 +88,6 @@ export function NewProjectModal({ isOpen, onClose }) {
         throw new Error(uploadData.error || "Failed to upload image");
       }
 
-      // Create project in Convex
       const projectId = await createProject({
         title: projectTitle.trim(),
         originalImageUrl: uploadData.url,
@@ -105,7 +100,6 @@ export function NewProjectModal({ isOpen, onClose }) {
 
       toast.success("Project created successfully!");
 
-      // Navigate to editor
       router.push(`/editor/${projectId}`);
     } catch (error) {
       console.error("Error creating project:", error);
@@ -117,7 +111,7 @@ export function NewProjectModal({ isOpen, onClose }) {
     }
   };
 
-  // Reset modal state
+
   const handleClose = () => {
     setSelectedFile(null);
     setPreviewUrl(null);

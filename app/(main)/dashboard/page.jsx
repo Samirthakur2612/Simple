@@ -11,7 +11,6 @@ import { ProjectGrid } from "./_components/project-grid";
 export default function DashboardPage() {
   const [showNewProjectModal, setShowNewProjectModal] = useState(false);
 
-  // Get user's projects
   const { data: projects, isLoading } = useConvexQuery(
     api.projects.getUserProjects
   );
@@ -62,7 +61,6 @@ export default function DashboardPage() {
   );
 }
 
-// Empty state when user has no projects
 function EmptyState({ onCreateProject }) {
   return (
     <div className="flex flex-col items-center justify-center py-20 text-center">
