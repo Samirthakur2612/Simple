@@ -16,11 +16,11 @@ const PricingCard = ({
   const [isHovered, setIsHovered] = useState(false);
   const { has } = useAuth();
 
-  // Check if user has this specific plan
+
   const isCurrentPlan = id ? has?.({ plan: id }) : false;
 
   const handlePopup = async () => {
-    if (isCurrentPlan) return; // Don't open checkout for current plan
+    if (isCurrentPlan) return; 
 
     try {
       if (window.Clerk && window.Clerk.__internal_openCheckout) {
@@ -38,11 +38,11 @@ const PricingCard = ({
   return (
     <div
       ref={ref}
-      className={`relative backdrop-blur-lg border rounded-3xl p-8 transition-all duration-700 cursor-pointer ₹{
+      className={`relative backdrop-blur-lg border rounded-3xl p-8 transition-all duration-700 cursor-pointer ${
         featured
           ? "bg-gradient-to-b from-blue-500/20 to-purple-600/20 border-blue-400/50 scale-105"
           : "bg-white/5 border-white/10"
-      } ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"} ₹{
+      } ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"} ${
         isHovered ? "transform scale-115 rotate-1 z-10" : ""
       }`}
       onMouseEnter={() => setIsHovered(true)}
@@ -86,7 +86,6 @@ const PricingCard = ({
   );
 };
 
-// Pricing Section Component
 const PricingSection = () => {
   const plans = [
     {
@@ -105,7 +104,7 @@ const PricingSection = () => {
     {
       id: "pro",
       plan: "Pro",
-      price: ₹12,
+      price: 99,
       features: [
         "Unlimited projects",
         "Unlimited exports",
@@ -147,3 +146,4 @@ const PricingSection = () => {
 };
 
 export default PricingSection;
+
