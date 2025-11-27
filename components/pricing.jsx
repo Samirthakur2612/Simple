@@ -38,11 +38,11 @@ const PricingCard = ({
   return (
     <div
       ref={ref}
-      className={`relative backdrop-blur-lg border rounded-3xl p-8 transition-all duration-700 cursor-pointer ${
+      className={`relative backdrop-blur-lg border rounded-3xl p-8 transition-all duration-700 cursor-pointer ₹{
         featured
           ? "bg-gradient-to-b from-blue-500/20 to-purple-600/20 border-blue-400/50 scale-105"
           : "bg-white/5 border-white/10"
-      } ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"} ${
+      } ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"} ₹{
         isHovered ? "transform scale-115 rotate-1 z-10" : ""
       }`}
       onMouseEnter={() => setIsHovered(true)}
@@ -59,7 +59,7 @@ const PricingCard = ({
       <div className="text-center">
         <h3 className="text-2xl font-bold text-white mb-2">{plan}</h3>
         <div className="text-4xl font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent mb-6">
-          ${price}
+          ₹{price}
           {price > 0 && <span className="text-lg text-gray-400">/month</span>}
         </div>
 
@@ -105,7 +105,7 @@ const PricingSection = () => {
     {
       id: "pro",
       plan: "Pro",
-      price: 12,
+      price: ₹12,
       features: [
         "Unlimited projects",
         "Unlimited exports",
